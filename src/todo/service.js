@@ -54,4 +54,14 @@ const deleteTodo = (todoId) => {
     return "Todo Delete successfully"
 
 }
-module.exports = { getTodo, addTodo, updateTodo ,deleteTodo}
+
+const getTodoById= (todoId) =>{
+    const detail = todoList.find((v)=>{
+        return v.id == todoId
+    })
+    if(!detail){
+        return "Todo does not exist"
+    }
+    return detail
+}
+module.exports = { getTodo, addTodo, updateTodo ,deleteTodo,getTodoById}

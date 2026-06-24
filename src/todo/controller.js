@@ -25,7 +25,7 @@ const addTodo = (req, res) => {
     console.log(payload)
     if (respo.error) {
         todoId = id - 1
-        res.json(respo.error.details[0].message)
+        res.status(500).json(respo.error.details[0].message)
     }
     else {
         const data = todoService.addTodo(payload)
@@ -64,5 +64,10 @@ const deleteTodo=(req,res)=>{
     const data =todoService.deleteTodo(todoId)
     res.send(data)
 }
+const getTodoById=(req,res)=>{
+    const todoId=req.params.id
+    const data=todoService.getTodoById(todoId)
+    res.json(data)
+}
 
-module.exports = { getTodo, addTodo, updateTodo, deleteTodo }
+module.exports = { getTodo, addTodo, updateTodo, deleteTodo,getTodoById }
