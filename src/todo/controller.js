@@ -1,12 +1,12 @@
 const todoService = require("./service")
 const joi = require('joi')
 let todoId = 2
-const getTodo = (req, res) => {
-    const todo = todoService.getTodo()
+const getTodo = async (req, res) => {
+    const todo = await todoService.getTodo()
     res.json(todo)
 }
 
-const addTodo = (req, res) => {
+const addTodo = async (req, res) => {
     const todoSchema = joi.object({
         id: joi.number().required(),
         title: joi.string().required(),
@@ -28,14 +28,14 @@ const addTodo = (req, res) => {
         res.status(500).json(respo.error.details[0].message)
     }
     else {
-        const data = todoService.addTodo(payload)
+        const data = await todoService.addTodo(payload)
         res.send(data)
     }
 }
 
-const updateTodo = (req, res) => {
+const updateTodo = async (req, res) => {
     const updateTodoSchema = joi.object({
-        id: joi.number().required(),
+        id: joi.string().required(),
         title: joi.string().optional(),
         description: joi.string().optional(),
         isCompleted: joi.boolean().optional()
@@ -53,7 +53,7 @@ const updateTodo = (req, res) => {
     res.send(error.details[0].message)
    }
    else {
-    const data=todoService.updateTodo(payload)
+    const data=await todoService.updateTodo(payload)
     res.send(data)
    }
 }
@@ -64,9 +64,9 @@ const deleteTodo=(req,res)=>{
     const data =todoService.deleteTodo(todoId)
     res.send(data)
 }
-const getTodoById=(req,res)=>{
+const getTodoById=async(req,res)=>{
     const todoId=req.params.id
-    const data=todoService.getTodoById(todoId)
+    const data=await todoService.getTodoById(todoId)
     res.json(data)
 }
 
