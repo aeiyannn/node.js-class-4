@@ -2,7 +2,13 @@ const todoService = require("./service")
 const joi = require('joi')
 let todoId = 2
 const getTodo = async (req, res) => {
-    const todo = await todoService.getTodo()
+    const payload ={
+        title:req.query.title,
+        description:req.query.description,
+        isCompleted:req.query.isCompleted
+    }
+    console.log(payload)
+    const todo = await todoService.getTodo(payload)
     res.json(todo)
 }
 
@@ -58,10 +64,10 @@ const updateTodo = async (req, res) => {
    }
 }
 
-const deleteTodo=(req,res)=>{
+const deleteTodo= async(req,res)=>{
     const todoId=req.params.id
     console.log(todoId)
-    const data =todoService.deleteTodo(todoId)
+    const data =await todoService.deleteTodo(todoId)
     res.send(data)
 }
 const getTodoById=async(req,res)=>{
@@ -70,4 +76,10 @@ const getTodoById=async(req,res)=>{
     res.json(data)
 }
 
-module.exports = { getTodo, addTodo, updateTodo, deleteTodo,getTodoById }
+const getTodoByTitle= async (req,res)=>{
+    const title=req.query.title
+    const data = await todoService.getTodoByTitle(title)
+    res.json(data)
+}
+
+module.exports = { getTodo, addTodo, updateTodo, deleteTodo,getTodoById ,getTodoByTitle}

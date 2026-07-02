@@ -1,8 +1,24 @@
 let todoList = require("./../../utils/todo")
 let helperfunctions = require('./../../utils/helper')
 const TodoModel = require("./../Model/todo")
-const getTodo = async () => {
-    const data = await TodoModel.find()
+const getTodo = async (payload) => {
+    const filterPayload = helperfunctions.cleanPayload(payload)
+    let mongoPayload = {}
+    if (filterPayload.title) {
+        mongoPayload.title = {
+            $regex: filterPayload.title,
+            $options:'i'
+        }
+    }
+        if (filterPayload.description) {
+        mongoPayload.description = {
+            $regex: filterPayload.description,
+            $options:'i'
+        }
+        }
+    const data = await TodoModel.find(mongoPayload)
+
+
     return data
 }
 const addTodo = async (payload) => {
@@ -13,12 +29,12 @@ const addTodo = async (payload) => {
         description: payload.description,
         isCompleted: payload.isCompleted
     }
-    const result=await TodoModel.create(cleanpayload)
+    const result = await TodoModel.create(cleanpayload)
     console.log(result)
     return "Todo add successfully"
 
 }
-const updateTodo =async (payload) => {
+const updateTodo = async (payload) => {
     console.log(payload, "actual payload")
     const filterPayload = helperfunctions.cleanPayload(payload)
     // const filterPayload = {}
@@ -46,28 +62,29 @@ const updateTodo =async (payload) => {
     // })
     // todoList[index] = { ...isTodoExist, ...filterPayload }
 
-    const result=await TodoModel.findByIdAndUpdate(payload.id,filterPayload)
+    const result = await TodoModel.findByIdAndUpdate(payload.id, filterPayload)
     console.log(result)
     return "Todo Update successfully"
 }
 
 
-const deleteTodo = (todoId) => {
-    const isTodoExist = todoList.find((v) => {
-        return v.id == todoId
-    })
-    if (!isTodoExist) {
-        console.log("Todo not exist")
-        return "Todo does not exist"
-    }
-    todoList = todoList.filter((v) => {
-        return v.id != todoId
-    })
+const deleteTodo = async (todoId) => {
+    // const isTodoExist = todoList.find((v) => {
+    //     return v.id == todoId
+    // })
+    // if (!isTodoExist) {
+    //     console.log("Todo not exist")
+    //     return "Todo does not exist"
+    // }
+    // todoList = todoList.filter((v) => {
+    //     return v.id != todoId
+    // })
+    const result = await TodoModel.findByIdAndDelete(todoId)
     return "Todo Delete successfully"
 
 }
 
-const getTodoById = async(todoId) => {
+const getTodoById = async (todoId) => {
     // const detail = todoList.find((v) => {
     //     return v.id == todoId
     // })
@@ -75,7 +92,20 @@ const getTodoById = async(todoId) => {
     //     return "Todo does not exist"
     // }
     // return detail
-    const result=await TodoModel.findById(todoId)
+    const result = await TodoModel.findById(todoId)
     return result
 }
-module.exports = { getTodo, addTodo, updateTodo, deleteTodo, getTodoById }
+
+const getTodoByTitle = async (todoTitle) => {
+    const result = await TodoModel.findOne({
+        title: {
+            $regex: todoTitle,
+            $options: 'i'
+        }
+    })
+    if (!result) {
+        return "Todo does not exist"
+    }
+    return result
+}
+module.exports = { getTodo, addTodo, updateTodo, deleteTodo, getTodoById, getTodoByTitle }
